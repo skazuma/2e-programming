@@ -9,8 +9,8 @@ int main(int argc, char **argv)
 
 
   // 代入
-  strcpy(s, "zou");
-  strcpy(t, "dazou");
+  strcpy(s, "guren");
+  strcpy(t, "ragan");
 
   //　そのまま表示
   printf("s=%s\n",s);
