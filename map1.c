@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #define KABE '#'
 #define START 'S'
 #define GOAL 'G'
@@ -8,6 +9,7 @@
 #define TREASURE '$'
 #define BOMB '*'
 #define GRASS '.'
+#define MITI ' '
 #define KITA '0'
 #define HIGASHI '1'
 #define MINAMI '2'
@@ -147,16 +149,52 @@ void make_map(void)
 
 void play_game(char command[])
 {
-	int i;
+	int i,j,x,y;
+	for(i=0;i<20;i++)
+	{
+		for(j=0;j<20;j++)
+		{
+			if(map[i][j]==PLAYER)
+			{
+				x=i;
+				y=j;
+			}
+		}
+	}
 	for(i=0;i<strlen(command);i++)
 	{
 		if(command[i]=='F')
 		{
 			if(muki==KITA)
 			{
-
+				map[x-1][y]=PLAYER;
+				map[x][y]=MITI;
+				x--;
+			}
+			else if(muki==HIGASHI)
+			{
+				map[x][y+1]=PLAYER;
+				map[x][y]=MITI;
+				y++;
+			}
+			else if(muki==MINAMI)
+			{
+				map[x+1][y]=PLAYER;
+				map[x][y]=MITI;
+				x++;
+			}
+			else if(muki==NISHI)
+			{
+				map[x][y-1]=PLAYER;
+				map[x][y]=MITI;
+				y--;
 			}
 		}
+		else if(command[i]=='R')
+		{
+			muki=(muki+1)%4;
+		}
+		display_map();
 	}
 
 }
@@ -164,6 +202,7 @@ void play_game(char command[])
 void display_map()
 {
 	int i,j;
+	printf("\x1b[2J");
 	for(i=0;i<20;i++)
 	{
 		for(j=0;j<20;j++)
@@ -217,6 +256,14 @@ void display_map()
         printf("\x1b[49m"); // 背景色をデフォルトに戻す
         printf("\x1b[39m"); // 文字色をデフォルトに戻す
 			}
+			else if(map[i][j]==MITI)
+			{
+				printf("\x1b[40m"); // 背景色の設定
+				printf("\x1b[30m"); // 文字色の設定
+				printf("%c", map[i][j]);
+				printf("\x1b[49m"); // 背景色をデフォルトに戻す
+				printf("\x1b[39m"); // 文字色をデフォルトに戻す
+			}
       else
       {
         printf("\x1b[42m"); // 背景色の設定
@@ -229,6 +276,8 @@ void display_map()
 		printf("\n");
 	}
 	printf("\n");
+	sleep(1);
+
 }
 
 int main(int argc, char** argv)
@@ -236,6 +285,7 @@ int main(int argc, char** argv)
 	char command[20];
 	make_map(); // マップの設定
 	map[1][0]=PLAYER;
+	muki=HIGASHI;
 	for(;;)
 	{
 		printf("コマンドを入力してください\n");
