@@ -10,10 +10,10 @@
 #define BOMB '*'
 #define GRASS '.'
 #define MITI ' '
-#define KITA '0'
-#define HIGASHI '1'
-#define MINAMI '2'
-#define NISHI '3'
+#define KITA 0
+#define HIGASHI 1
+#define MINAMI 2
+#define NISHI 3
 
 char map[20][20]; // マップを保持する二次元配列
 int muki;
@@ -47,7 +47,6 @@ void make_map(void)
     if(map[r1][r2]==GRASS)
     {
       map[r1][r2]=TREASURE;
-
     }
     else{
       i--;
@@ -195,6 +194,7 @@ void play_game(char command[])
 			muki=(muki+1)%4;
 		}
 		display_map();
+
 	}
 
 }
@@ -276,8 +276,7 @@ void display_map()
 		printf("\n");
 	}
 	printf("\n");
-	sleep(1);
-
+	usleep(500000);
 }
 
 int main(int argc, char** argv)
@@ -288,6 +287,22 @@ int main(int argc, char** argv)
 	muki=HIGASHI;
 	for(;;)
 	{
+		if(muki==KITA)
+		{
+			printf("北を向いています\n");
+		}
+		else if(muki==HIGASHI)
+		{
+			printf("東を向いています\n");
+		}
+		else if(muki==MINAMI)
+		{
+			printf("南を向いています\n");
+		}
+		else if(muki==NISHI)
+		{
+			printf("西を向いています\n");
+		}
 		printf("コマンドを入力してください\n");
 		fgets(command,sizeof(command),stdin);
 		play_game(command);
@@ -295,7 +310,6 @@ int main(int argc, char** argv)
 			printf("ゲームクリア！おめでとうございます！！\n");
 			break;
 		}
-
 	}
 	return 0;
 }
