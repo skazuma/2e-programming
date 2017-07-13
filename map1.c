@@ -16,7 +16,7 @@
 #define NISHI 3
 
 char map[20][20]; // マップを保持する二次元配列
-int muki;
+int muki=HIGASHI;
 
 void make_map(void)
 {
@@ -99,24 +99,76 @@ void play_game(char command[])
 		{
 			if(muki==KITA)
 			{
+				if(map[x-1][y]==KABE)
+				{
+					printf("この方向には進めません。\n");
+					break;
+				}
+				else if(map[x-1][y]==BOMB)
+				{
+					map[x][y]=MITI;
+					map[x-1][y]=BOMB;
+					display_map();
+					printf("GAME OVER:プレーヤーが爆弾を踏みました。\n");
+					exit(0);
+				}
 				map[x-1][y]=PLAYER;
 				map[x][y]=MITI;
 				x--;
 			}
 			else if(muki==HIGASHI)
 			{
+				if(map[x][y+1]==KABE)
+				{
+					printf("この方向には進めません。\n");
+					break;
+				}
+				else if(map[x][y+1]==BOMB)
+				{
+					map[x][y]=MITI;
+					map[x][y+1]=BOMB;
+					display_map();
+					printf("GAME OVER:プレーヤーが爆弾を踏みました。\n");
+					exit(0);
+				}
 				map[x][y+1]=PLAYER;
 				map[x][y]=MITI;
 				y++;
 			}
 			else if(muki==MINAMI)
 			{
+				if(map[x+1][y]==KABE)
+				{
+					printf("この方向には進めません。\n");
+					break;
+				}
+				else if(map[x+1][y]==BOMB)
+				{
+					map[x][y]=MITI;
+					map[x+1][y]=BOMB;
+					display_map();
+					printf("GAME OVER:プレーヤーが爆弾を踏みました。\n");
+					exit(0);
+				}
 				map[x+1][y]=PLAYER;
 				map[x][y]=MITI;
 				x++;
 			}
 			else if(muki==NISHI)
 			{
+				if(map[x][y-1]==KABE)
+				{
+					printf("この方向には進めません。\n");
+					break;
+				}
+				else if(map[x][y-1]==BOMB)
+				{
+					map[x][y]=MITI;
+					map[x][y-1]=BOMB;
+					display_map();
+					printf("GAME OVER:プレーヤーが爆弾を踏みました。\n");
+					exit(0);
+				}
 				map[x][y-1]=PLAYER;
 				map[x][y]=MITI;
 				y--;
@@ -126,13 +178,8 @@ void play_game(char command[])
 		{
 			muki=(muki+1)%4;
 		}
-		else
-		{
-			printf("'F'か'R'のどちらかを入力してください\n");
-		}
 		display_map();
 	}
-
 }
 
 void display_map()
@@ -211,6 +258,24 @@ void display_map()
 		}
 		printf("\n");
 	}
+
+	if(muki==KITA)
+	{
+		printf("↑\n");
+	}
+	else if(muki==HIGASHI)
+	{
+		printf("→\n");
+	}
+	else if(muki==MINAMI)
+	{
+		printf("↓\n");
+	}
+	else if(muki==NISHI)
+	{
+		printf("←\n");
+	}
+
 	printf("\n");
 	usleep(500000);
 }
@@ -221,7 +286,6 @@ int main(int argc, char** argv)
 	make_map(); // マップの設定
 	display_map();
 	map[1][0]=PLAYER;
-	muki=HIGASHI;
 	for(;;)
 	{
 		if(muki==KITA)
