@@ -17,6 +17,7 @@
 
 char map[20][20]; // マップを保持する二次元配列
 int muki=HIGASHI;
+int tcount=0;
 
 void make_map(void)
 {
@@ -112,6 +113,10 @@ void play_game(char command[])
 					printf("GAME OVER:プレーヤーが爆弾を踏みました。\n");
 					exit(0);
 				}
+				else if(map[x-1][y]==TREASURE)
+				{
+					tcount++;
+				}
 				map[x-1][y]=PLAYER;
 				map[x][y]=MITI;
 				x--;
@@ -130,6 +135,10 @@ void play_game(char command[])
 					display_map();
 					printf("GAME OVER:プレーヤーが爆弾を踏みました。\n");
 					exit(0);
+				}
+				else if(map[x][y+1]==TREASURE)
+				{
+					tcount++;
 				}
 				map[x][y+1]=PLAYER;
 				map[x][y]=MITI;
@@ -150,6 +159,10 @@ void play_game(char command[])
 					printf("GAME OVER:プレーヤーが爆弾を踏みました。\n");
 					exit(0);
 				}
+				else if(map[x+1][y]==TREASURE)
+				{
+					tcount++;
+				}
 				map[x+1][y]=PLAYER;
 				map[x][y]=MITI;
 				x++;
@@ -168,6 +181,10 @@ void play_game(char command[])
 					display_map();
 					printf("GAME OVER:プレーヤーが爆弾を踏みました。\n");
 					exit(0);
+				}
+				else if(map[x][y-1]==TREASURE)
+				{
+					tcount++;
 				}
 				map[x][y-1]=PLAYER;
 				map[x][y]=MITI;
@@ -314,6 +331,14 @@ int main(int argc, char** argv)
 			play_game(command);
 			if(map[18][19]==PLAYER){
 				printf("ゲームクリア！おめでとうございます！！\n");
+				if(tcount>0)
+				{
+					printf("宝箱を%d個見つけました！\n",tcount);
+				}
+				else
+				{
+					printf("宝箱を見つけられませんでした。\n");
+				}
 				break;
 			}
 		}
