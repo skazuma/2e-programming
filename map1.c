@@ -76,73 +76,6 @@ void make_map(void)
       i--;
     }
   }
-
-
-  for(i = 0; i < 20; i++)
-	{
-		for(j = 0; j < 20; j++)
-		{
-      if(map[i][j]==START)
-      {
-        printf("\x1b[40m"); // 背景色の設定
-        printf("\x1b[31m"); // 文字色の設定
-        printf("%c", map[i][j]);
-        printf("\x1b[49m"); // 背景色をデフォルトに戻す
-        printf("\x1b[39m"); // 文字色をデフォルトに戻す
-
-      }
-      else if(map[i][j]==GOAL)
-      {
-        printf("\x1b[40m"); // 背景色の設定
-        printf("\x1b[31m"); // 文字色の設定
-        printf("%c", map[i][j]);
-        printf("\x1b[49m"); // 背景色をデフォルトに戻す
-        printf("\x1b[39m"); // 文字色をデフォルトに戻す
-      }
-      else if(map[i][j]==TREASURE)
-      {
-        printf("\x1b[47m"); // 背景色の設定
-        printf("\x1b[33m"); // 文字色の設定
-        printf("%c", map[i][j]);
-        printf("\x1b[49m"); // 背景色をデフォルトに戻す
-        printf("\x1b[39m"); // 文字色をデフォルトに戻す
-      }
-      else if(map[i][j]==KABE)
-      {
-        printf("\x1b[47m"); // 背景色の設定
-        printf("\x1b[30m"); // 文字色の設定
-        printf("%c", map[i][j]);
-        printf("\x1b[49m"); // 背景色をデフォルトに戻す
-        printf("\x1b[39m"); // 文字色をデフォルトに戻す
-      }
-			else if(map[i][j]==BOMB)
-      {
-        printf("\x1b[47m"); // 背景色の設定
-        printf("\x1b[31m"); // 文字色の設定
-        printf("%c", map[i][j]);
-        printf("\x1b[49m"); // 背景色をデフォルトに戻す
-        printf("\x1b[39m"); // 文字色をデフォルトに戻す
-      }
-			else if(map[i][j]==PLAYER)
-			{
-				printf("\x1b[40m"); // 背景色の設定
-        printf("\x1b[34m"); // 文字色の設定
-        printf("%c", map[i][j]);
-        printf("\x1b[49m"); // 背景色をデフォルトに戻す
-        printf("\x1b[39m"); // 文字色をデフォルトに戻す
-			}
-      else
-      {
-        printf("\x1b[42m"); // 背景色の設定
-  			printf("\x1b[32m"); // 文字色の設定
-  			printf("%c", map[i][j]);
-  			printf("\x1b[49m"); // 背景色をデフォルトに戻す
-  			printf("\x1b[39m"); // 文字色をデフォルトに戻す
-      }
-		}
-		printf("\n");
-	}
-
 	printf("\n");
 }
 
@@ -193,8 +126,11 @@ void play_game(char command[])
 		{
 			muki=(muki+1)%4;
 		}
+		else
+		{
+			printf("'F'か'R'のどちらかを入力してください\n");
+		}
 		display_map();
-
 	}
 
 }
@@ -283,6 +219,7 @@ int main(int argc, char** argv)
 {
 	char command[20];
 	make_map(); // マップの設定
+	display_map();
 	map[1][0]=PLAYER;
 	muki=HIGASHI;
 	for(;;)
@@ -305,10 +242,16 @@ int main(int argc, char** argv)
 		}
 		printf("コマンドを入力してください\n");
 		fgets(command,sizeof(command),stdin);
-		play_game(command);
-		if(map[18][19]==PLAYER){
-			printf("ゲームクリア！おめでとうございます！！\n");
-			break;
+		if(strlen(command)>20){
+			printf("コマンドは1度に20回までです。\n");
+		}
+		else
+		{
+			play_game(command);
+			if(map[18][19]==PLAYER){
+				printf("ゲームクリア！おめでとうございます！！\n");
+				break;
+			}
 		}
 	}
 	return 0;
