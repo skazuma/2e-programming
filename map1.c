@@ -42,11 +42,11 @@ void make_map(void)
 		}
 	}
 
-  for(i=0;i<3;i++)
+  for(i=0;i<3;i++)//宝箱の配置
   {
     r1=(rand()%18)+1;
     r2=(rand()%18)+1;
-		if(r1==1 || r1==18)
+		if(r1==1 || r1==18)//１行目と１８行目には配置させない
 		{
 			i--;
 			continue;
@@ -59,7 +59,7 @@ void make_map(void)
       i--;
     }
   }
-  for(i=0;i<10;i++)
+  for(i=0;i<10;i++)//壁の配置
   {
     r1=(rand()%18)+1;
     r2=(rand()%18)+1;
@@ -76,7 +76,7 @@ void make_map(void)
       i--;
     }
   }
-  for(i=0;i<5;i++)
+  for(i=0;i<5;i++)//爆弾の配置
   {
     r1=(rand()%18)+1;
     r2=(rand()%18)+1;
@@ -93,7 +93,7 @@ void make_map(void)
       i--;
     }
   }
-	for(i=0;i<2;i++)
+	for(i=0;i<2;i++)//ワープ地点の配置
 	{
 		r1=(rand()%18)+1;
     r2=(rand()%18)+1;
@@ -112,7 +112,8 @@ void make_map(void)
 	}
 	printf("\n");
 }
-int seek_x(char s)
+
+int seek_x(char s)//あるアイテムのある行数を返す関数
 {
 	int i,j;
 	for(i=0;i<20;i++)
@@ -126,7 +127,8 @@ int seek_x(char s)
 		}
 	}
 }
-int seek_y(char s)
+
+int seek_y(char s)//あるアイテムのある列数を返す関数
 {
 	int i,j;
 	for(i=0;i<20;i++)
@@ -140,23 +142,24 @@ int seek_y(char s)
 		}
 	}
 }
-void play_game(char command[])
+
+void play_game(char command[])//プレーヤーを動かす関数
 {
-	int i,j,x,y;
+	int i,x,y;
 	x=seek_x(PLAYER);
 	y=seek_y(PLAYER);
 	for(i=0;i<strlen(command);i++)
 	{
-		if(command[i]=='F')
+		if(command[i]=='F' || command[i]=='f')//前進するときの処理
 		{
-			if(muki==KITA)
+			if(muki==KITA)                      //北を向いているとき
 			{
-				if(map[x-1][y]==KABE)
+				if(map[x-1][y]==KABE)             //壁に当たったら
 				{
 					printf("この方向には進めません。\n");
 					break;
 				}
-				else if(map[x-1][y]==BOMB)
+				else if(map[x-1][y]==BOMB)         //爆弾に当たったら
 				{
 					map[x][y]=MITI;
 					map[x-1][y]=BOMB;
@@ -164,11 +167,11 @@ void play_game(char command[])
 					printf("GAME OVER:プレーヤーが爆弾を踏みました。\n");
 					exit(0);
 				}
-				else if(map[x-1][y]==TREASURE)
+				else if(map[x-1][y]==TREASURE)     //宝箱に当たったら
 				{
 					tcount++;
 				}
-				else if(map[x-1][y]==WARP)
+				else if(map[x-1][y]==WARP)         //ワープ地点に当たったら
 				{
 					int w1,w2;
 					map[x][y]=MITI;
@@ -178,13 +181,13 @@ void play_game(char command[])
 					map[w1][w2]=PLAYER;
 					x=w1;
 					y=w2;
-					break;
+					continue;
 				}
 				map[x-1][y]=PLAYER;
 				map[x][y]=MITI;
 				x--;
 			}
-			else if(muki==HIGASHI)
+			else if(muki==HIGASHI)               //東を向いているとき
 			{
 				if(map[x][y+1]==KABE)
 				{
@@ -213,13 +216,13 @@ void play_game(char command[])
 					map[w1][w2]=PLAYER;
 					x=w1;
 					y=w2;
-					break;
+					continue;
 				}
 				map[x][y+1]=PLAYER;
 				map[x][y]=MITI;
 				y++;
 			}
-			else if(muki==MINAMI)
+			else if(muki==MINAMI)               //南を向いているとき
 			{
 				if(map[x+1][y]==KABE)
 				{
@@ -248,13 +251,13 @@ void play_game(char command[])
 					map[w1][w2]=PLAYER;
 					x=w1;
 					y=w2;
-					break;
+					continue;
 				}
 				map[x+1][y]=PLAYER;
 				map[x][y]=MITI;
 				x++;
 			}
-			else if(muki==NISHI)
+			else if(muki==NISHI)                //西を向いているとき
 			{
 				if(map[x][y-1]==KABE)
 				{
@@ -283,14 +286,14 @@ void play_game(char command[])
 					map[w1][w2]=PLAYER;
 					x=w1;
 					y=w2;
-					break;
+					continue;
 				}
 				map[x][y-1]=PLAYER;
 				map[x][y]=MITI;
 				y--;
 			}
 		}
-		else if(command[i]=='R')
+		else if(command[i]=='R' || command[i]=='r')//右回転するときの処理
 		{
 			muki=(muki+1)%4;
 		}
@@ -299,7 +302,7 @@ void play_game(char command[])
 	}
 }
 
-void display_map()
+void display_map()//マップを表示する関数
 {
 	int i,j;
 	printf("\x1b[2J");
