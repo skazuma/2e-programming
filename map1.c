@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #define KABE '#'
 #define START 'S'
 #define GOAL 'G'
@@ -14,6 +15,7 @@
 #define HIGASHI 1
 #define MINAMI 2
 #define NISHI 3
+#define WARP '?'
 
 char map[20][20]; // マップを保持する二次元配列
 int muki=HIGASHI;
@@ -22,8 +24,7 @@ int tcount=0;
 void make_map(void)
 {
 	int i, j,r1,r2;
-  srand(18);
-
+	srand((unsigned)time(NULL));
 	for(i = 0; i < 20; i++)
 	{
 		for(j = 0; j < 20; j++)
@@ -45,6 +46,11 @@ void make_map(void)
   {
     r1=(rand()%18)+1;
     r2=(rand()%18)+1;
+		if(r1==1 || r1==18)
+		{
+			i--;
+			continue;
+		}
     if(map[r1][r2]==GRASS)
     {
       map[r1][r2]=TREASURE;
@@ -57,6 +63,11 @@ void make_map(void)
   {
     r1=(rand()%18)+1;
     r2=(rand()%18)+1;
+		if(r1==1 || r1==18)
+		{
+			i--;
+			continue;
+		}
     if(map[r1][r2]==GRASS)
     {
       map[r1][r2]=KABE;
@@ -69,6 +80,11 @@ void make_map(void)
   {
     r1=(rand()%18)+1;
     r2=(rand()%18)+1;
+		if(r1==1 || r1==18)
+		{
+			i--;
+			continue;
+		}
     if(map[r1][r2]==GRASS)
     {
       map[r1][r2]=BOMB;
@@ -77,23 +93,58 @@ void make_map(void)
       i--;
     }
   }
+	for(i=0;i<2;i++)
+	{
+		r1=(rand()%18)+1;
+    r2=(rand()%18)+1;
+		if(r1==1 || r1==18)
+		{
+			i--;
+			continue;
+		}
+    if(map[r1][r2]==GRASS)
+    {
+      map[r1][r2]=WARP;
+    }
+    else{
+      i--;
+    }
+	}
 	printf("\n");
 }
-
-void play_game(char command[])
+int seek_x(char s)
 {
-	int i,j,x,y;
+	int i,j;
 	for(i=0;i<20;i++)
 	{
 		for(j=0;j<20;j++)
 		{
-			if(map[i][j]==PLAYER)
+			if(map[i][j]==s)
 			{
-				x=i;
-				y=j;
+				return i;
 			}
 		}
 	}
+}
+int seek_y(char s)
+{
+	int i,j;
+	for(i=0;i<20;i++)
+	{
+		for(j=0;j<20;j++)
+		{
+			if(map[i][j]==s)
+			{
+				return j;
+			}
+		}
+	}
+}
+void play_game(char command[])
+{
+	int i,j,x,y;
+	x=seek_x(PLAYER);
+	y=seek_y(PLAYER);
 	for(i=0;i<strlen(command);i++)
 	{
 		if(command[i]=='F')
@@ -116,6 +167,18 @@ void play_game(char command[])
 				else if(map[x-1][y]==TREASURE)
 				{
 					tcount++;
+				}
+				else if(map[x-1][y]==WARP)
+				{
+					int w1,w2;
+					map[x][y]=MITI;
+					map[x-1][y]=WARP;
+					w1=seek_x(WARP);
+					w2=seek_y(WARP);
+					map[w1][w2]=PLAYER;
+					x=w1;
+					y=w2;
+					break;
 				}
 				map[x-1][y]=PLAYER;
 				map[x][y]=MITI;
@@ -140,6 +203,18 @@ void play_game(char command[])
 				{
 					tcount++;
 				}
+				else if(map[x][y+1]==WARP)
+				{
+					int w1,w2;
+					map[x][y]=MITI;
+					map[x][y+1]=MITI;
+					w1=seek_x(WARP);
+					w2=seek_y(WARP);
+					map[w1][w2]=PLAYER;
+					x=w1;
+					y=w2;
+					break;
+				}
 				map[x][y+1]=PLAYER;
 				map[x][y]=MITI;
 				y++;
@@ -162,6 +237,18 @@ void play_game(char command[])
 				else if(map[x+1][y]==TREASURE)
 				{
 					tcount++;
+				}
+				else if(map[x+1][y]==WARP)
+				{
+					int w1,w2;
+					map[x][y]=MITI;
+					map[x+1][y]=MITI;
+					w1=seek_x(WARP);
+					w2=seek_y(WARP);
+					map[w1][w2]=PLAYER;
+					x=w1;
+					y=w2;
+					break;
 				}
 				map[x+1][y]=PLAYER;
 				map[x][y]=MITI;
@@ -186,6 +273,18 @@ void play_game(char command[])
 				{
 					tcount++;
 				}
+				else if(map[x][y-1]==WARP)
+				{
+					int w1,w2;
+					map[x][y]=MITI;
+					map[x][y-1]=MITI;
+					w1=seek_x(WARP);
+					w2=seek_y(WARP);
+					map[w1][w2]=PLAYER;
+					x=w1;
+					y=w2;
+					break;
+				}
 				map[x][y-1]=PLAYER;
 				map[x][y]=MITI;
 				y--;
@@ -195,6 +294,7 @@ void play_game(char command[])
 		{
 			muki=(muki+1)%4;
 		}
+
 		display_map();
 	}
 }
@@ -264,6 +364,14 @@ void display_map()
 				printf("\x1b[49m"); // 背景色をデフォルトに戻す
 				printf("\x1b[39m"); // 文字色をデフォルトに戻す
 			}
+			else if(map[i][j]==WARP)
+			{
+				printf("\x1b[47m"); // 背景色の設定
+				printf("\x1b[34m"); // 文字色の設定
+				printf("%c", map[i][j]);
+				printf("\x1b[49m"); // 背景色をデフォルトに戻す
+				printf("\x1b[39m"); // 文字色をデフォルトに戻す
+			}
       else
       {
         printf("\x1b[42m"); // 背景色の設定
@@ -299,7 +407,7 @@ void display_map()
 
 int main(int argc, char** argv)
 {
-	char command[20];
+	char command[21];
 	make_map(); // マップの設定
 	display_map();
 	map[1][0]=PLAYER;
@@ -321,27 +429,24 @@ int main(int argc, char** argv)
 		{
 			printf("西を向いています\n");
 		}
-		printf("コマンドを入力してください\n");
-		fgets(command,sizeof(command),stdin);
-		if(strlen(command)>20){
-			printf("コマンドは1度に20回までです。\n");
-		}
-		else
-		{
-			play_game(command);
-			if(map[18][19]==PLAYER){
-				printf("ゲームクリア！おめでとうございます！！\n");
-				if(tcount>0)
-				{
-					printf("宝箱を%d個見つけました！\n",tcount);
-				}
-				else
-				{
-					printf("宝箱を見つけられませんでした。\n");
-				}
-				break;
+		printf("コマンドを入力してください(20文字まで)\n");
+		printf("前進：F,右回転(90度)：R\n");
+		fgets(command,21,stdin);
+
+		play_game(command);
+		if(map[18][19]==PLAYER){
+			printf("ゲームクリア！おめでとうございます！！\n");
+			if(tcount>0)
+			{
+				printf("宝箱を%d個見つけました！\n",tcount);
 			}
+			else
+			{
+				printf("宝箱を見つけられませんでした。\n");
+			}
+			break;
 		}
+
 	}
 	return 0;
 }
