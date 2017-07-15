@@ -297,6 +297,9 @@ void play_game(char command[])//プレーヤーを動かす関数
 		{
 			muki=(muki+1)%4;
 		}
+		else{
+			continue;
+		}
 
 		display_map();
 	}
