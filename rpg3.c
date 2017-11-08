@@ -1,4 +1,4 @@
-//構造体を使ったソースコード
+*e//構造体を使ったソースコード
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,8 +19,12 @@ int sute(FILE *);
 
 int main(int argc,char **argv)
 {
-  srand(time(NULL));
-  struct status p1,p2,e1,e2;
+  //srand(time(NULL));
+  srand(1);
+  struct status player[2];
+  struct status *p=player;
+  struct status enemy[2];
+  struct status *e=enemy;
   FILE *f1,*f2;
   int t1,t2,t3,t4,command,dmg;
 
@@ -33,28 +37,28 @@ int main(int argc,char **argv)
   }
 
   t1=sute(f1);
-  p1.hp=t1/10;
+  *p.hp=t1/10;
 
   t1=sute(f1);
-  p1.atk=t1/20;
+  *p.atk=t1/20;
 
   t1=sute(f1);
-  p1.def=t1/20;
+  *p.def=t1/20;
 
   //player2のステータス設定
   t2=sute(f1);
-  p2.hp=t2/10;
+  *(p+1).hp=t2/10;
 
   t2=sute(f1);
-  p2.atk=t2/20;
+  *(p+1).atk=t2/20;
 
   t2=sute(f1);
-  p2.def=t2/20;
+  *(p+1).def=t2/20;
 
   fclose(f1);
 
   //enemy1のステータス設定
-  strcpy(e1.name,"スライムくん");
+  strcpy(*e.name,"スライムくん");
 
   f2=fopen(argv[2],"r");
   if(f2==NULL)
@@ -64,100 +68,100 @@ int main(int argc,char **argv)
   }
 
   t3=sute(f2);
-  e1.hp=t3/10;
+  *e.hp=t3/10;
 
   t3=sute(f2);
-  e1.atk=t3/20;
+  *e.atk=t3/20;
 
   t3=sute(f2);
-  e1.def=t3/20;
+  *e.def=t3/20;
 
   //enemy2のステータス設定
-  strcpy(e2.name,"ドラゲナイ");
+  strcpy(*(e+1).name,"ドラゲナイ");
 
   t4=sute(f2);
-  e2.hp=t4/10;
+  *(e+1).hp=t4/10;
 
   t4=sute(f2);
-  e2.atk=t4/20;
+  *(e+1).atk=t4/20;
 
   t4=sute(f2);
-  e2.def=t4/20;
+  *(e+1).def=t4/20;
   fclose(f2);
 
   printf("ゲームスタート\n");
   sleep(1);
   printf("一人目の味方の名前を設定してください。\n");
-  fgets(p1.name,sizeof(p1.name),stdin);
-  strtok(p1.name,"\n\0");
-  if(strcmp(p1.name,"承太郎")==0)
+  fgets(*p.name,sizeof(*p.name),stdin);
+  strtok(*p.name,"\n\0");
+  if(strcmp(*p.name,"承太郎")==0)
   {
-    p1.hp=999;
-    p1.atk=300;
-    p1.def=300;
-    strcpy(e1.name,"DIO");
-    e1.hp=999;
-    e1.atk=300;
-    e1.def=300;
+    *p.hp=999;
+    *p.atk=300;
+    *p.def=300;
+    strcpy(*e.name,"DIO");
+    *e.hp=999;
+    *e.atk=300;
+    *e.def=300;
   }
   printf("二人目の味方の名前を設定してください。\n");
-  fgets(p2.name,sizeof(p2.name),stdin);
-  strtok(p2.name,"\n\0");
-  printf("%s,%sが現れた！\n",e1.name,e2.name);
+  fgets(*(p+1).name,sizeof(*(p+1).name),stdin);
+  strtok(*(p+1).name,"\n\0");
+  printf("%s,%sが現れた！\n",*e.name,*(e+1).name);
   sleep(2);
-  while((p1.hp>0 || p2.hp>0) && (e1.hp>0 || e2.hp>0))
+  while((*p.hp>0 || *(p+1).hp>0) && (*e.hp>0 || *(e+1).hp>0))
   {
-    if(p1.hp==0)
+    if(*p.hp==0)
     {
-      printf("%sは倒れたまま動かない…\n",p1.name);
+      printf("%sは倒れたまま動かない…\n",*p.name);
       sleep(1);
     }
     else{
       while(1)
       {
-        printf("%s(hp:%d)はどの敵を攻撃する？\n",p1.name,p1.hp);
-        printf("1.%s(hp:%d)  2.%s(hp:%d)\n",e1.name,e1.hp,e2.name,e2.hp);
+        printf("%s(hp:%d)はどの敵を攻撃する？\n",*p.name,*p.hp);
+        printf("1.%s(hp:%d)  2.%s(hp:%d)\n",*e.name,*e.hp,*(e+1).name,*(e+1).hp);
         scanf("%d",&command);
         if(command==1)
         {
-          if(e1.hp==0)
+          if(*e.hp==0)
           {
-            printf("%sは既に倒れている…\n",e1.name);
+            printf("%sは既に倒れている…\n",*e.name);
             sleep(1);
             continue;
           }
           else
           {
-            dmg=damage(p1,e1);
-            kougeki(p1,e1,dmg);
-            e1.hp-=dmg;
-            if(e1.hp<=0)
+            dmg=damage(*p,*e);
+            kougeki(*p,*e,dmg);
+            *e.hp-=dmg;
+            if(*e.hp<=0)
             {
-              printf("%sは倒れた！\n",e1.name);
+              printf("%sは倒れた！\n",*e.name);
               sleep(2);
-              e1.hp=0;
+              *e.hp=0;
             }
             break;
           }
         }
         else if(command==2)
         {
-          if(e2.hp==0)
+          if(*(e+1).hp==0)
           {
-            printf("%sは既に倒れている…\n",e2.name);
+            printf("%sは既に倒れている…\n",*(e+1).name);
             sleep(1);
             continue;
           }
           else
           {
-            dmg=damage(p1,e2);
-            kougeki(p1,e2,dmg);
-            e2.hp-=dmg;
-            if(e2.hp<=0)
+            dmg=damage(*p,*(e+1));
+            kougeki(*p,*(e+1),dmg);
+            *(e+1).hp-=dmg;
+            if(*(e+1).hp<=0)
             {
-              printf("%sは倒れた！\n",e2.name);
+              printf("%sは倒れた！\n",*(e+1).name);
               sleep(2);
-              e2.hp=0;
+              *(e+1).hp=0;
             }
             break;
           }
@@ -169,63 +173,63 @@ int main(int argc,char **argv)
         }
       }
     }
-    if(e1.hp==0 && e2.hp==0)
+    if(*e.hp==0 && *(e+1).hp==0)
     {
       break;
     }
 
-    if(p2.hp==0)
+    if(*(p+1).hp==0)
     {
-      printf("%sは倒れたまま動かない…\n",p2.name);
+      printf("%sは倒れたまま動かない…\n",*(p+1).name);
       sleep(1);
     }
     else
     {
       while(1)
       {
-        printf("%s(hp:%d)はどの敵を攻撃する？\n",p2.name,p2.hp);
-        printf("1.%s(hp:%d)  2.%s(hp:%d)\n",e1.name,e1.hp,e2.name,e2.hp);
+        printf("%s(hp:%d)はどの敵を攻撃する？\n",*(p+1).name,*(p+1).hp);
+        printf("1.%s(hp:%d)  2.%s(hp:%d)\n",*e.name,*e.hp,*(e+1).name,*(e+1).hp);
         scanf("%d",&command);
         if(command==1)
         {
-          if(e1.hp==0)
+          if(*e.hp==0)
           {
-            printf("%sは既に倒れている…\n",e1.name);
+            printf("%sは既に倒れている…\n",*e.name);
             sleep(1);
             continue;
           }
           else
           {
-            dmg=damage(p2,e1);
-            kougeki(p2,e1,dmg);
-            e1.hp-=dmg;
-            if(e1.hp<=0)
+            dmg=damage(*(p+1),*e);
+            kougeki(*(p+1),*e,dmg);
+            *e.hp-=dmg;
+            if(*e.hp<=0)
             {
-              printf("%sは倒れた！\n",e1.name);
+              printf("%sは倒れた！\n",*e.name);
               sleep(2);
-              e1.hp=0;
+              *e.hp=0;
             }
             break;
           }
         }
         else if(command==2)
         {
-          if(e2.hp==0)
+          if(*(e+1).hp==0)
           {
-            printf("%sは既に倒れている…\n",e2.name);
+            printf("%sは既に倒れている…\n",*(e+1).name);
             sleep(1);
             continue;
           }
           else
           {
-            dmg=damage(p2,e2);
-            kougeki(p2,e2,dmg);
-            e2.hp-=dmg;
-            if(e2.hp<=0)
+            dmg=damage(*(p+1),*(e+1));
+            kougeki(*(p+1),*(e+1),dmg);
+            *(e+1).hp-=dmg;
+            if(*(e+1).hp<=0)
             {
-              printf("%sは倒れた！\n",e2.name);
+              printf("%sは倒れた！\n",*(e+1).name);
               sleep(2);
-              e2.hp=0;
+              *(e+1).hp=0;
             }
             break;
           }
@@ -238,17 +242,17 @@ int main(int argc,char **argv)
     }
 
 
-    if(e1.hp!=0)
+    if(*e.hp!=0)
     {
       printf("敵のターン！\n");
       sleep(2);
-      printf("%sの攻撃！\n",e1.name);
+      printf("%sの攻撃！\n",*e.name);
       sleep(1);
-      if(p1.hp==0)
+      if(*p.hp==0)
       {
         command=2;
       }
-      else if(p2.hp==0)
+      else if(*(p+1).hp==0)
       {
         command=1;
       }
@@ -257,39 +261,39 @@ int main(int argc,char **argv)
       }
       if(command==1)
       {
-        dmg=damage(e1,p1);
-        kougeki(e1,p1,dmg);
-        p1.hp-=dmg;
-        if(p1.hp<=0)
+        dmg=damage(*e,*p);
+        kougeki(*e,*p,dmg);
+        *p.hp-=dmg;
+        if(*p.hp<=0)
         {
-          printf("%sは倒れた！\n",p1.name);
+          printf("%sは倒れた！\n",*p.name);
           sleep(2);
-          p1.hp=0;
+          *p.hp=0;
         }
       }
       else if(command==2)
       {
-        dmg=damage(e1,p2);
-        kougeki(e1,p2,dmg);
-        p2.hp-=dmg;
-        if(p2.hp<=0)
+        dmg=damage(*e,*(p+1));
+        kougeki(*e,*(p+1),dmg);
+        *(p+1).hp-=dmg;
+        if(*(p+1).hp<=0)
         {
-          printf("%sは倒れた！\n",p2.name);
+          printf("%sは倒れた！\n",*(p+1).name);
           sleep(2);
-          p2.hp=0;
+          *(p+1).hp=0;
         }
       }
     }
 
-    if(e2.hp!=0)
+    if(*(e+1).hp!=0)
     {
-      printf("%sの攻撃！\n",e2.name);
+      printf("%sの攻撃！\n",*(e+1).name);
       sleep(1);
-      if(p1.hp==0)
+      if(*p.hp==0)
       {
         command=2;
       }
-      else if(p2.hp==0)
+      else if(*(p+1).hp==0)
       {
         command=1;
       }
@@ -298,34 +302,34 @@ int main(int argc,char **argv)
       }
       if(command==1)
       {
-        dmg=damage(e2,p1);
-        kougeki(e2,p1,dmg);
-        p1.hp-=dmg;
-        if(p1.hp<=0)
+        dmg=damage(*(e+1),*p);
+        kougeki(*(e+1),*p,dmg);
+        *p.hp-=dmg;
+        if(*p.hp<=0)
         {
-          printf("%sは倒れた！\n",p1.name);
+          printf("%sは倒れた！\n",*p.name);
           sleep(2);
-          p1.hp=0;
+          *p.hp=0;
         }
       }
       else if(command==2)
       {
-        dmg=damage(e2,p2);
-        kougeki(e2,p2,dmg);
-        p2.hp-=dmg;
-        if(p2.hp<=0)
+        dmg=damage(*(e+1),*(p+1));
+        kougeki(*(e+1),*(p+1),dmg);
+        *(p+1).hp-=dmg;
+        if(*(p+1).hp<=0)
         {
-          printf("%sは倒れた！\n",p2.name);
+          printf("%sは倒れた！\n",*(p+1).name);
           sleep(2);
-          p2.hp=0;
+          *(p+1).hp=0;
         }
       }
     }
 
   }
-  if(p1.hp>0 || p2.hp>0)
+  if(*p.hp>0 || *(p+1).hp>0)
   {
-    if(strcmp(p1.name,"承太郎")==0)
+    if(strcmp(*p.name,"承太郎")==0)
     {
       printf("DIO「ば…ばかなッ！…………こ…このDIOが…………」\n");
       sleep(1);
@@ -348,7 +352,7 @@ int main(int argc,char **argv)
   }
   else
   {
-    if(strcmp(p1.name,"承太郎")==0)
+    if(strcmp(*p.name,"承太郎")==0)
     {
       printf("DIO「貧弱貧弱ゥ…ちょいとでもおれにかなうとでも思ったか！マヌケがァ〜〜！");
     }
