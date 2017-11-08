@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <unistd.h>
 
 struct status{
@@ -19,7 +18,6 @@ int sute(FILE *);
 
 int main(int argc,char **argv)
 {
-  //srand(time(NULL));
   srand(1);
   struct status player[2];
   struct status *p=player;
@@ -244,6 +242,7 @@ int main(int argc,char **argv)
 
     if((*e).hp!=0)
     {
+      srand(1);
       printf("敵のターン！\n");
       sleep(2);
       printf("%sの攻撃！\n",(*e).name);
@@ -287,6 +286,7 @@ int main(int argc,char **argv)
 
     if((*(e+1)).hp!=0)
     {
+      srand(1);
       printf("%sの攻撃！\n",(*(e+1)).name);
       sleep(1);
       if((*p).hp==0)
@@ -366,6 +366,7 @@ int main(int argc,char **argv)
 
 int damage(struct status x,struct status y)
 {
+  srand(1);
   int dmg,a,b,c;
   a=x.atk-y.def/2;
   b=a/16+1;
